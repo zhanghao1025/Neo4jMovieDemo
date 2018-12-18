@@ -1,0 +1,138 @@
+<!--Created by IntelliJ IDEA.-->
+<!--User: zhongyuxinxi-02-->
+<!--Date: 2018-12-12-->
+<!--Time: 15:14-->
+<!--To change this template use File | Settings | File Templates.-->
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Title</title>
+    <!--<link rel="stylesheet" href="/static/css/layui.css">-->
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <script src="/static/layui/layui.js"></script>
+    <script src="/static/jquery-1.8.2.min.js"></script>
+    <script src="/static/js/svg.js"></script>
+</head>
+<style type="text/css">
+
+    h3 {
+        font-family: "Roboto","Helvetica","Arial",sans-serif;
+        font-weight: 400;
+        font-size: 50px;
+        color: white;
+        line-height: 40px;
+        display: block;
+        font-size: 1.17em;
+        -webkit-margin-before: 1em;
+        -webkit-margin-after: 1em;
+        -webkit-margin-start: 0px;
+        -webkit-margin-end: 0px;
+        font-weight: bold;
+    }
+    td{
+      text-align: center;
+    }hh
+</style>
+<body>
+<!--文本框位置-->
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>文本字段</legend>
+</fieldset>
+
+<fieldset class="layui-elem-field">
+    <div class="layui-field-box">
+        <table class="layui-table">
+            <td style="width: 10%;background-color: #b2dfdb"><h3>输入文本</h3></td>
+
+            <td>
+                <div class="layui-inline" style="width: 80%">
+                    <input type="text" name="text" id="text"  autocomplete="off" placeholder="请输入文本" class="layui-input" style="width: 90%">
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layui-btn-normal layui-btn-sm" id="queryThreeGroup" >解析</button>
+                </div>
+            </td>
+        </table>
+    </div>
+    <!--三元组位置-->
+    <div class="layui-form-item">
+        <center>
+            <div class="layui-inline">
+                <label class="layui-form-label">实体一</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="entityOne" id="entityOne" lay-verify="required|number" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">关系</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="date" id="relation" lay-verify="date" placeholder="" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">实体二</label>
+                <div class="layui-input-inline">
+                    <input type="tel" name="entityTow" id="entityTow" lay-verify="url" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </center>
+    </div>
+</fieldset>
+
+<!--词法分析-->
+<fieldset class="layui-elem-field">
+    <div class="layui-field-box">
+        <table class="layui-table" style="height: 25%">
+            <td style="width: 10%;background-color: #b2dfdb"><h3>词法分析</h3></td>
+
+            <td>
+                <div id="canvas">
+
+                </div>
+            </td>
+        </table>
+    </div>
+</fieldset>
+
+<!--句法分析-->
+<fieldset class="layui-elem-field">
+    <div class="layui-field-box">
+        <table class="layui-table"  style="height: 25%">
+            <td style="width: 10%;background-color: #b2dfdb"><h3>句法分析</h3></td>
+
+            <td></td>
+        </table>
+    </div>
+</fieldset>
+
+</body>
+</html>
+<script type="text/javascript">
+    //采用POST方式调用服务
+    $("#queryThreeGroup").click(function(){
+        var txt=$("#text").val();
+        $.post("/entity/queryThreeGroup.json",{text:txt},function(result){
+                if (result.length>0){
+                    for (var i=0;i<result.length;i++){
+                        var tempWord = result[i];
+                        $("#entityOne").val(tempWord.entityOne);
+                        $("#relation").val(tempWord.relationship);
+                        $("#entityTow").val(tempWord.entityTow);
+                    }
+                } else{
+                    alert("未能分词");
+                }
+        });
+    });
+    //svg图
+    var draw = SVG('canvas').size(600, 600);
+    // var rect = draw.rect(20, 20).attr({ fill: '#32e9ff',y:10 });
+    var text = draw.text(function(add) {
+        add.tspan('第一')
+        add.tspan('第二').dx(100)
+        add.tspan('第三').dx(100)
+    })
+
+    text.fill("#f06").y(10).x(5)
+</script>
